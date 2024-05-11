@@ -1,0 +1,14 @@
+# Log files
+*.log
+
+# JetBrains IDE
+.idea/
+
+# Golang
+*.mod
+*.sum
+
+*/vendor
+*/bin
+
+package-lock.json
