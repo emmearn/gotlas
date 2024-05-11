@@ -11,11 +11,12 @@ import (
 )
 
 func main() {
-	middleware := internal.NewAuthMiddleware()
-
-	_, api := internal.NewAPI(middleware)
+	authSvc, _ := internal.NewAuthService()
+	middleware := internal.NewAuthMiddleware(*authSvc)
 
 	r := mux.NewRouter()
+
+	_, api := internal.NewAPI(middleware)
 	api.RegisterRoutes(r, nil)
 
 	srv := &http.Server{
