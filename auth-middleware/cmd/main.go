@@ -1,20 +1,29 @@
 package main
 
 import (
-	"github.com/emmearn/gotlas/auth-middleware/internal"
+	"log"
+	"net/http"
+	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/emmearn/gotlas.git/auth-middleware/internal"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	middleware := internal.NewAuthMiddleware()
 
-	err, api := internal.NewAPI(middleware)
+	_, api := internal.NewAPI(middleware)
 
-	router := gin.Default()
-	api.RegisterRoutes(router)
+	r := mux.NewRouter()
+	api.RegisterRoutes(r, nil)
 
-	if err != router.Run(); err != nil {
-		panic("uh oh")
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         "127.0.0.1:8000",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
+
+	log.Fatal(srv.ListenAndServe())
 }

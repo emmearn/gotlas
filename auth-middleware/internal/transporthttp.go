@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 )
 
 type Middleware interface {
@@ -23,11 +23,11 @@ func NewAPI(authMiddleware Middleware) (*API, error) {
 	return &API{authMiddleware: authMiddleware}, nil
 }
 
-func (a *API) RegisterRoutes(router *gin.Engine, handlerFunc func(http.ResponseWriter, *http.Request)) {
+func (a *API) RegisterRoutes(router *mux.Router, handlerFunc func(http.ResponseWriter, *http.Request)) {
 	// Al posto di `nil` ci andrebbe l'handler per la risorsa
 	a.registerRoute(router, "GET", "/api/v1/whatever", handlerFunc)
 }
 
-func (a *API) registerRoute(router *gin.Engine, method, path string, handlerFunc func(http.ResponseWriter, *http.Request)) {
+func (a *API) registerRoute(router *mux.Router, method, path string, handlerFunc func(http.ResponseWriter, *http.Request)) {
 	router.Methods(method).Path(path).Handler(a.authMiddleware.Wrap(http.HandlerFunc(handlerFunc)))
 }
