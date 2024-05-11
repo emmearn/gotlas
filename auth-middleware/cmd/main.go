@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/emmearn/gotlas/auth-middleware/internal"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -9,10 +11,10 @@ func main() {
 
 	err, api := internal.NewAPI(middleware)
 
-	// qui devi passargli il router del server, dipendentemente dal server che usi (e.g. weaveworks)
-	api.RegisterRoutes(server.Router)
+	router := gin.Default()
+	api.RegisterRoutes(router)
 
-	if err != server.Run(); err != nil {
+	if err != router.Run(); err != nil {
 		panic("uh oh")
 	}
 }

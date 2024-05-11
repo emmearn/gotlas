@@ -7,19 +7,13 @@ import (
 )
 
 type AuthMiddleware struct {
-	// dipendenze da chiamare per authnz
+	authService AuthService
 }
 
-func NewAuthMiddleware(
-// dipendenze
-) *AuthMiddleware {
+func NewAuthMiddleware(authService AuthService) *AuthMiddleware {
 	return &AuthMiddleware{
-		// dipendenze
+		authService: authService,
 	}
-}
-
-type Response struct {
-	Message string `json:"message"`
 }
 
 // Wrap soddisfa l'interfaccia dichiarata in transporthttp.go
@@ -27,17 +21,13 @@ func (a AuthMiddleware) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		// fai quello che ti serve per authnz
-		// questo è un esempio di come estrarre gli header
 		token := r.Header.Get("Authorization")
 		user := r.Header.Get("User")
 
-		// Esempio: chiami la tua dep e ti restituisce merda
-		authResponse, err := a.authService.ValidateToken(ctx, token)
+		_, err := a.authService.ValidateToken(ctx, token)
 		if err != nil {
-			// qui controlli l'errore, ma per semplicità restituiamo sempre 400
 			res := Response{
-				Message: "oooooooh",
+				Message: "error",
 			}
 
 			w.WriteHeader(http.StatusBadRequest)
@@ -49,11 +39,10 @@ func (a AuthMiddleware) Wrap(next http.Handler) http.Handler {
 			return
 		}
 
-		// inserisci eventuali dati nel contesto se vuoi
 		ctx = context.WithValue(ctx, "token", token)
 		ctx = context.WithValue(ctx, "user", user)
 
-		// chiami il prossimo handler nella catena
+		// prossimo handler nella catena
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
