@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/emmearn/gotlas/internal"
+	"github.com/emmearn/gotlas/auth-middleware/internal"
 )
 
 func main() {
 	middleware := internal.NewAuthMiddleware()
 
-	api := internal.NewAPI(middleware)
+	err, api := internal.NewAPI(middleware)
 
 	// qui devi passargli il router del server, dipendentemente dal server che usi (e.g. weaveworks)
 	api.RegisterRoutes(server.Router)

@@ -23,13 +23,14 @@ type Response struct {
 }
 
 // Wrap soddisfa l'interfaccia dichiarata in transporthttp.go
-func (a AuthMiddleware) Wrap(next http.Handler) httl.Handler {
+func (a AuthMiddleware) Wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
 		// fai quello che ti serve per authnz
 		// questo è un esempio di come estrarre gli header
 		token := r.Header.Get("Authorization")
+		user := r.Header.Get("User")
 
 		// Esempio: chiami la tua dep e ti restituisce merda
 		authResponse, err := a.authService.ValidateToken(ctx, token)
