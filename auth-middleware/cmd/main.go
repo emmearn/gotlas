@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -17,7 +18,7 @@ func main() {
 	r := mux.NewRouter()
 
 	_, api := internal.NewAPI(middleware)
-	api.RegisterRoutes(r, nil)
+	api.RegisterRoutes(r, handler)
 
 	srv := &http.Server{
 		Handler:      r,
@@ -27,4 +28,14 @@ func main() {
 	}
 
 	log.Fatal(srv.ListenAndServe())
+}
+
+func handler(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	res := &internal.Response{
+		Message: "Hi!",
+	}
+	b, _ := json.Marshal(res)
+	w.Write(b)
 }
