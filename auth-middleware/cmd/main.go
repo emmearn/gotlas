@@ -17,7 +17,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	_, api := internal.NewAPI(middleware)
+	api, _ := internal.NewAPI(middleware)
 	api.RegisterRoutes(r, handler)
 
 	srv := &http.Server{

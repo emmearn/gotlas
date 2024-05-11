@@ -27,7 +27,7 @@ func (a AuthMiddleware) Wrap(next http.Handler) http.Handler {
 		_, err := a.authService.ValidateToken(ctx, token)
 		if err != nil {
 			res := Response{
-				Message: "error",
+				Message: "error in middleware",
 			}
 
 			w.WriteHeader(http.StatusBadRequest)

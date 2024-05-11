@@ -17,7 +17,7 @@ type API struct {
 
 func NewAPI(authMiddleware Middleware) (*API, error) {
 	if authMiddleware == nil {
-		return nil, errors.New("ooooh")
+		return nil, errors.New("error in http transport")
 	}
 
 	return &API{authMiddleware: authMiddleware}, nil
