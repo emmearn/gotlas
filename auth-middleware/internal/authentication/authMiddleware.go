@@ -1,9 +1,11 @@
-package internal
+package auth
 
 import (
 	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/emmearn/gotlas.git/auth-middleware/internal/models"
 )
 
 type AuthMiddleware struct {
@@ -26,7 +28,7 @@ func (a AuthMiddleware) Wrap(next http.Handler) http.Handler {
 
 		_, err := a.authService.ValidateToken(ctx, token)
 		if err != nil {
-			res := Response{
+			res := models.Response{
 				Message: "error in middleware",
 			}
 

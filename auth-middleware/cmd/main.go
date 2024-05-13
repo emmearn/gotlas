@@ -1,24 +1,24 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/emmearn/gotlas.git/auth-middleware/internal"
+	auth "github.com/emmearn/gotlas.git/auth-middleware/internal/authentication"
+	"github.com/emmearn/gotlas.git/auth-middleware/internal/transporthttp"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	authSvc, _ := internal.NewAuthService()
-	middleware := internal.NewAuthMiddleware(*authSvc)
+	authSvc, _ := auth.NewAuthService()
+	middleware := auth.NewAuthMiddleware(*authSvc)
 
 	r := mux.NewRouter()
 
-	api, _ := internal.NewAPI(middleware)
-	api.RegisterRoutes(r, handler)
+	api, _ := transporthttp.NewAPI(middleware)
+	api.RegisterRoutes(r)
 
 	srv := &http.Server{
 		Handler:      r,
@@ -28,14 +28,4 @@ func main() {
 	}
 
 	log.Fatal(srv.ListenAndServe())
-}
-
-func handler(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	res := &internal.Response{
-		Message: "Hi!",
-	}
-	b, _ := json.Marshal(res)
-	w.Write(b)
 }
